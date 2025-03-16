@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime
+  User              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  User                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+model List {
+  id      Int     @id @default(autoincrement())
+  name    String  @db.VarChar(50)
+  id_type String
+  id_user String
+  Type    Type    @relation(fields: [id_type], references: [id])
+  User    User    @relation(fields: [id_user], references: [id])
+  Score   Score[]
+}
+
+model Score {
+  id         Int  @id @default(autoincrement())
+  firstshot  Int
+  secondshot Int
+  thirdshot  Int
+  id_list    Int
+  List       List @relation(fields: [id_list], references: [id])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Type {
+  id          String @id
+  name        String @unique @db.VarChar(50)
+  points      Int
+  range       Int
+  volleys     Int
+  color       String @db.VarChar(50)
+  category    String @db.VarChar(50)
+  sortOrderNb Int
+  List        List[]
+}
+
+model User {
+  id            String          @id
+  createdAt     DateTime        @default(now())
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  name          String?
+  updatedAt     DateTime
+  Account       Account[]
+  Authenticator Authenticator[]
+  List          List[]
+  Session       Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
