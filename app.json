@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "shotrecord-mobile",
-    "slug": "shotrecord-mobile",
+    "slug": "shotrecord",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cee900be-e8b5-4936-bd6e-02b284e701f3"
+      }
+    },
+    "owner": "quentinm34"
   }
 }
